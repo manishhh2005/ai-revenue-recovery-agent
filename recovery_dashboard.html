@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Recovery Ledger Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B0E17;
+    --sidebar: #0E1220;
+    --surface: #141828;
+    --surface-2: #1B2036;
+    --line: #262C46;
+    --text: #EDEFF7;
+    --muted: #8890B0;
+    --accent: #3ED9A8;
+    --accent-dim: rgba(62,217,168,0.12);
+    --atrisk: #FF9A62;
+    --danger: #FF6B6B;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    display: flex;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    width: 220px;
+    background: var(--sidebar);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    padding: 22px 16px;
+    flex-shrink: 0;
+  }
+  .brand{
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .brand-sub{
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 26px;
+  }
+  .nav-item{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 4px;
+  }
+  .nav-item .dot{ width:6px; height:6px; border-radius:50%; background: currentColor; opacity:.6; }
+  .nav-item.active{
+    background: var(--accent);
+    color: #06251C;
+    font-weight: 600;
+  }
+  .nav-item.active .dot{ opacity: 1; }
+  .nav-item:not(.active):hover{ background: var(--surface); color: var(--text); }
+  .sidebar-footer{
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .avatar{
+    width: 32px; height:32px; border-radius: 50%;
+    background: var(--surface-2);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+  }
+  .avatar-name{ font-size: 12.5px; font-weight: 600; }
+  .avatar-role{ font-size: 11px; color: var(--muted); }
+
+  /* Main */
+  .main{ flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .topbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .search{
+    flex: 1;
+    max-width: 420px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .content{ padding: 26px 28px 60px; overflow-y: auto; }
+
+  .page-header{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .page-title{
+    font-family: var(--display);
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .last-updated{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--muted);
+  }
+  .last-updated span{ color: var(--accent); }
+
+  .stat-row{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .stat-card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .stat-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .stat-label{ font-size: 12px; color: var(--muted); }
+  .stat-value{
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 26px;
+    margin-top: 8px;
+  }
+  .stat-value.green{ color: var(--accent); }
+  .stat-value.orange{ color: var(--atrisk); }
+  .stat-sub{ font-size: 11.5px; color: var(--muted); margin-top: 6px; }
+  .stat-sub.up{ color: var(--accent); }
+
+  .callout{
+    display:flex; align-items:center; gap: 12px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(62,217,168,0.3);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+  }
+  .callout .icon{
+    width: 22px; height:22px; flex-shrink:0;
+    border-radius:50%; background: var(--accent); color:#06251C;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 12px; font-weight:700;
+  }
+  .callout .ctxt b{ display:block; font-size: 13px; margin-bottom:2px; }
+  .callout .ctxt span{ font-size: 12px; color: var(--muted); }
+
+  .panel{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .panel-head{
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .export-btn{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .export-btn:hover{ border-color: var(--accent); }
+
+  .reason-row{
+    display: grid;
+    grid-template-columns: 130px 1fr 140px;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .reason-row:last-child{ border-bottom: none; }
+  .reason-name{ font-size: 13.5px; font-weight: 500; }
+  .reason-track{
+    height: 8px; border-radius: 5px;
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+  .reason-fill{ height:100%; background: var(--accent); border-radius:5px; }
+  .reason-amt{
+    font-family: var(--mono); font-size: 12px; text-align: right; color: var(--accent);
+  }
+  .reason-amt .of{ color: var(--muted); }
+
+  .filters{ display:flex; gap:8px; padding: 14px 20px 0; }
+  .filter-btn{
+    font-family: var(--mono); font-size: 11.5px;
+    padding: 6px 13px; border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .filter-btn.active{ background: var(--accent); border-color: var(--accent); color:#06251C; font-weight:600; }
+
+  table{ width:100%; border-collapse: collapse; margin-top: 10px; }
+  thead th{
+    text-align:left; font-family: var(--mono); font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);
+    padding: 8px 20px; border-bottom: 1px solid var(--line);
+  }
+  tbody td{ padding: 11px 20px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+  tbody tr:hover{ background: var(--surface-2); }
+  .mono{ font-family: var(--mono); }
+  .badge{
+    font-family: var(--mono); font-size: 10.5px; font-weight: 700;
+    padding: 3px 10px; border-radius: 5px; letter-spacing: 0.03em;
+  }
+  .badge.recovered{ background: rgba(62,217,168,0.15); color: var(--accent); }
+  .badge.attempt_failed{ background: rgba(255,107,107,0.15); color: var(--danger); }
+  .badge.no_action_taken{ background: rgba(136,144,176,0.18); color: var(--muted); }
+  .badge.pending_human_review{ background: rgba(255,154,98,0.15); color: var(--atrisk); }
+  .table-scroll{ max-height: 360px; overflow-y: auto; }
+
+  /* Baseline comparison */
+  .compare-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+  }
+  .compare-col{
+    background: var(--surface);
+    padding: 18px 20px;
+  }
+  .compare-col.agent{ background: rgba(62,217,168,0.05); }
+  .compare-label{
+    font-family: var(--mono); font-size: 10.5px; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--muted); margin-bottom: 4px;
+  }
+  .compare-desc{ font-size: 11.5px; color: var(--muted); margin-bottom: 14px; }
+  .compare-value{ font-family: var(--mono); font-weight:700; font-size: 24px; }
+  .compare-value.orange{ color: var(--atrisk); }
+  .compare-value.green{ color: var(--accent); }
+  .compare-meta{ font-size: 11.5px; color: var(--muted); margin-top: 10px; line-height:1.6; }
+  .compare-meta b{ color: var(--text); }
+  .delta-strip{
+    background: var(--accent-dim);
+    padding: 12px 20px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    border-top: 1px solid rgba(62,217,168,0.25);
+  }
+  .delta-strip span{ color: var(--text); font-family: var(--body); }
+
+  /* Case walkthrough */
+  .case-card{
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .case-step{
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .case-step:last-child{ border-bottom: none; }
+  .case-step .step-num{
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 1px solid var(--accent); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .case-step .step-body b{ font-size: 13px; display:block; margin-bottom: 2px; }
+  .case-step .step-body span{ font-size: 12px; color: var(--muted); }
+  .case-flag{
+    display:inline-block; margin-top:4px;
+    font-family: var(--mono); font-size: 10.5px;
+    background: rgba(255,154,98,0.15); color: var(--atrisk);
+    padding: 2px 8px; border-radius: 4px;
+  }
+
+  @media (max-width: 860px){
+    body{ flex-direction: column; }
+    .sidebar{ width: 100%; flex-direction: row; align-items:center; padding: 12px 16px; overflow-x:auto; }
+    .brand-sub{ display:none; }
+    .sidebar-footer{ display:none; }
+    .nav-item{ margin-bottom:0; white-space:nowrap; }
+    .stat-row{ grid-template-columns: 1fr; }
+    .reason-row{ grid-template-columns: 1fr; text-align:left; gap:8px; }
+    .reason-amt{ text-align:left; }
+    .compare-grid{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="brand">Recovery Led…</div>
+  <div class="brand-sub">AI Payment Recovery</div>
+  <div class="nav-item active"><span class="dot"></span> Overview</div>
+  <div class="nav-item"><span class="dot"></span> Audit Trail</div>
+  <div class="nav-item"><span class="dot"></span> Settings</div>
+  <div class="sidebar-footer">
+    <div class="avatar">👤</div>
+    <div>
+      <div class="avatar-name">Buildathon Demo</div>
+      <div class="avatar-role">Track 03</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="search">🔍 Search Case ID, Reason, or Amount…</div>
+    <div style="color:var(--muted); font-size:16px; display:flex; gap:16px;">🔔 ❓</div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <div class="page-title">Recovery Overview</div>
+      <div class="last-updated">Batch run · <span id="batchNote">synthetic test data</span></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-top"><div class="stat-label">Recovery Rate</div></div>
+        <div class="stat-value green" id="statRate">—</div>
+        <div class="stat-sub" id="statRateSub">recovered of total at risk</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top"><div class="stat-label">Total At Risk</div></div>
+        <div class="stat-value orange" id="statRisk">—</div>
+        <div class="stat-sub" id="statRiskSub">across all failed cases</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top"><div class="stat-label">Total Recovered</div></div>
+        <div class="stat-value green" id="statRecovered">—</div>
+        <div class="stat-sub" id="statRecoveredSub">across recovered cases</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="icon">i</div>
+      <div class="ctxt">
+        <b id="calloutTitle">— stopping-rule overrides</b>
+        <span>The agent's hard safety rules corrected the LLM's raw suggestion on these cases — e.g. blocking a back-to-back retry, or forcing a stop on an unrecoverable card.</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">Recovery by Failure Reason</div>
+      <div id="reasonPanel"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">Agent vs. Naive Retry-Everything Baseline</div>
+      <div class="compare-grid" id="compareGrid"></div>
+      <div class="delta-strip" id="deltaStrip"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">Case Walkthrough — CASE0004</div>
+      <div class="case-card" id="caseWalkthrough"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        Audit Trail
+        <button class="export-btn" onclick="exportCSV()">↓ Export</button>
+      </div>
+      <div class="filters" id="filters"></div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Case ID</th>
+              <th>Reason</th>
+              <th>Amount</th>
+              <th>Outcome</th>
+            </tr>
+          </thead>
+          <tbody id="auditBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const AUDIT = [{"case_id": "CASE0001", "customer_id": "CUST1001", "amount_inr": 199.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0002", "customer_id": "CUST1002", "amount_inr": 299.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0003", "customer_id": "CUST1003", "amount_inr": 999.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0004", "customer_id": "CUST1004", "amount_inr": 4999.0, "failure_reason": "network_timeout", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Transient network error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 4999.0}, {"case_id": "CASE0005", "customer_id": "CUST1005", "amount_inr": 4999.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 4999.0}, {"case_id": "CASE0006", "customer_id": "CUST1006", "amount_inr": 299.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0007", "customer_id": "CUST1007", "amount_inr": 1499.0, "failure_reason": "daily_limit_exceeded", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Daily transaction limit hit; retry after reset.", "outcome": "recovered", "recovered_amount_inr": 1499.0}, {"case_id": "CASE0008", "customer_id": "CUST1008", "amount_inr": 1499.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "recovered", "recovered_amount_inr": 1499.0}, {"case_id": "CASE0009", "customer_id": "CUST1009", "amount_inr": 199.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0010", "customer_id": "CUST1010", "amount_inr": 1499.0, "failure_reason": "account_closed", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Account closed; nothing to recover.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0011", "customer_id": "CUST1011", "amount_inr": 1499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0012", "customer_id": "CUST1012", "amount_inr": 499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0013", "customer_id": "CUST1013", "amount_inr": 999.0, "failure_reason": "network_timeout", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Transient network error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 999.0}, {"case_id": "CASE0014", "customer_id": "CUST1014", "amount_inr": 1499.0, "failure_reason": "account_closed", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Account closed; nothing to recover.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0015", "customer_id": "CUST1015", "amount_inr": 9999.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0016", "customer_id": "CUST1016", "amount_inr": 1499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0017", "customer_id": "CUST1017", "amount_inr": 499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0018", "customer_id": "CUST1018", "amount_inr": 499.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 499.0}, {"case_id": "CASE0019", "customer_id": "CUST1019", "amount_inr": 9999.0, "failure_reason": "daily_limit_exceeded", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Daily transaction limit hit; retry after reset.", "outcome": "recovered", "recovered_amount_inr": 9999.0}, {"case_id": "CASE0020", "customer_id": "CUST1020", "amount_inr": 1499.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "recovered", "recovered_amount_inr": 1499.0}, {"case_id": "CASE0021", "customer_id": "CUST1021", "amount_inr": 199.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0022", "customer_id": "CUST1022", "amount_inr": 1499.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0023", "customer_id": "CUST1023", "amount_inr": 199.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 199.0}, {"case_id": "CASE0024", "customer_id": "CUST1024", "amount_inr": 1499.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "recovered", "recovered_amount_inr": 1499.0}, {"case_id": "CASE0025", "customer_id": "CUST1025", "amount_inr": 9999.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0026", "customer_id": "CUST1026", "amount_inr": 499.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0027", "customer_id": "CUST1027", "amount_inr": 999.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0028", "customer_id": "CUST1028", "amount_inr": 9999.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0029", "customer_id": "CUST1029", "amount_inr": 999.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "recovered", "recovered_amount_inr": 999.0}, {"case_id": "CASE0030", "customer_id": "CUST1030", "amount_inr": 999.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0031", "customer_id": "CUST1031", "amount_inr": 999.0, "failure_reason": "network_timeout", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Transient network error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 999.0}, {"case_id": "CASE0032", "customer_id": "CUST1032", "amount_inr": 9999.0, "failure_reason": "daily_limit_exceeded", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Daily transaction limit hit; retry after reset.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0033", "customer_id": "CUST1033", "amount_inr": 299.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0034", "customer_id": "CUST1034", "amount_inr": 299.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0035", "customer_id": "CUST1035", "amount_inr": 999.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0036", "customer_id": "CUST1036", "amount_inr": 1499.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 1499.0}, {"case_id": "CASE0037", "customer_id": "CUST1037", "amount_inr": 299.0, "failure_reason": "network_timeout", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Transient network error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0038", "customer_id": "CUST1038", "amount_inr": 499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0039", "customer_id": "CUST1039", "amount_inr": 499.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0040", "customer_id": "CUST1040", "amount_inr": 4999.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "recovered", "recovered_amount_inr": 4999.0}, {"case_id": "CASE0041", "customer_id": "CUST1041", "amount_inr": 199.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0042", "customer_id": "CUST1042", "amount_inr": 199.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0043", "customer_id": "CUST1043", "amount_inr": 299.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0044", "customer_id": "CUST1044", "amount_inr": 4999.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0045", "customer_id": "CUST1045", "amount_inr": 299.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0046", "customer_id": "CUST1046", "amount_inr": 999.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0047", "customer_id": "CUST1047", "amount_inr": 9999.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "recovered", "recovered_amount_inr": 9999.0}, {"case_id": "CASE0048", "customer_id": "CUST1048", "amount_inr": 299.0, "failure_reason": "daily_limit_exceeded", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Daily transaction limit hit; retry after reset.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0049", "customer_id": "CUST1049", "amount_inr": 2999.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 2999.0}, {"case_id": "CASE0050", "customer_id": "CUST1050", "amount_inr": 1499.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0051", "customer_id": "CUST1051", "amount_inr": 299.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0052", "customer_id": "CUST1052", "amount_inr": 499.0, "failure_reason": "network_timeout", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Transient network error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 499.0}, {"case_id": "CASE0053", "customer_id": "CUST1053", "amount_inr": 999.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0054", "customer_id": "CUST1054", "amount_inr": 4999.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0055", "customer_id": "CUST1055", "amount_inr": 1499.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 1499.0}, {"case_id": "CASE0056", "customer_id": "CUST1056", "amount_inr": 199.0, "failure_reason": "network_timeout", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Transient network error; safe to retry immediately.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0057", "customer_id": "CUST1057", "amount_inr": 2999.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0058", "customer_id": "CUST1058", "amount_inr": 1499.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "recovered", "recovered_amount_inr": 1499.0}, {"case_id": "CASE0059", "customer_id": "CUST1059", "amount_inr": 299.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0060", "customer_id": "CUST1060", "amount_inr": 999.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "recovered", "recovered_amount_inr": 999.0}, {"case_id": "CASE0061", "customer_id": "CUST1061", "amount_inr": 4999.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "recovered", "recovered_amount_inr": 4999.0}, {"case_id": "CASE0062", "customer_id": "CUST1062", "amount_inr": 199.0, "failure_reason": "account_closed", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Account closed; nothing to recover.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0063", "customer_id": "CUST1063", "amount_inr": 999.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0064", "customer_id": "CUST1064", "amount_inr": 1499.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0065", "customer_id": "CUST1065", "amount_inr": 2999.0, "failure_reason": "account_closed", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Account closed; nothing to recover.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0066", "customer_id": "CUST1066", "amount_inr": 199.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0067", "customer_id": "CUST1067", "amount_inr": 4999.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0068", "customer_id": "CUST1068", "amount_inr": 1499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0069", "customer_id": "CUST1069", "amount_inr": 2999.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0070", "customer_id": "CUST1070", "amount_inr": 299.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "recovered", "recovered_amount_inr": 299.0}, {"case_id": "CASE0071", "customer_id": "CUST1071", "amount_inr": 4999.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0072", "customer_id": "CUST1072", "amount_inr": 499.0, "failure_reason": "account_closed", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Account closed; nothing to recover.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0073", "customer_id": "CUST1073", "amount_inr": 1499.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0074", "customer_id": "CUST1074", "amount_inr": 9999.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "recovered", "recovered_amount_inr": 9999.0}, {"case_id": "CASE0075", "customer_id": "CUST1075", "amount_inr": 499.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0076", "customer_id": "CUST1076", "amount_inr": 2999.0, "failure_reason": "daily_limit_exceeded", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Daily transaction limit hit; retry after reset.", "outcome": "recovered", "recovered_amount_inr": 2999.0}, {"case_id": "CASE0077", "customer_id": "CUST1077", "amount_inr": 499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0078", "customer_id": "CUST1078", "amount_inr": 9999.0, "failure_reason": "expired_card", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card has expired; customer needs to update payment method.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0079", "customer_id": "CUST1079", "amount_inr": 9999.0, "failure_reason": "account_closed", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Account closed; nothing to recover.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0080", "customer_id": "CUST1080", "amount_inr": 299.0, "failure_reason": "insufficient_funds", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Likely temporary cash-flow issue; wait before retrying.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0081", "customer_id": "CUST1081", "amount_inr": 199.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_now", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0082", "customer_id": "CUST1082", "amount_inr": 9999.0, "failure_reason": "bank_server_error", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Bank-side server error; safe to retry immediately.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0083", "customer_id": "CUST1083", "amount_inr": 4999.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "recovered", "recovered_amount_inr": 4999.0}, {"case_id": "CASE0084", "customer_id": "CUST1084", "amount_inr": 1499.0, "failure_reason": "issuer_declined_generic", "root_cause_category": "temporary_bank_issue", "llm_recommended_action": "retry_now", "final_action": "retry_in_3_days", "stopping_rule_triggered": true, "stopping_rule_reason": "override: consecutive immediate retries blocked, spacing out attempt", "diagnosis_reasoning": "Generic issuer decline; often resolves on retry.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0085", "customer_id": "CUST1085", "amount_inr": 1499.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0086", "customer_id": "CUST1086", "amount_inr": 2999.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0087", "customer_id": "CUST1087", "amount_inr": 4999.0, "failure_reason": "card_reported_stolen", "root_cause_category": "unrecoverable", "llm_recommended_action": "stop_no_action", "final_action": "stop_no_action", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Card reported stolen; no legitimate retry path.", "outcome": "no_action_taken", "recovered_amount_inr": 0.0}, {"case_id": "CASE0088", "customer_id": "CUST1088", "amount_inr": 9999.0, "failure_reason": "wrong_otp", "root_cause_category": "user_action_needed", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "OTP entry issue; retry once, then prompt customer.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}, {"case_id": "CASE0089", "customer_id": "CUST1089", "amount_inr": 199.0, "failure_reason": "daily_limit_exceeded", "root_cause_category": "user_action_needed", "llm_recommended_action": "retry_in_3_days", "final_action": "retry_in_3_days", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "Daily transaction limit hit; retry after reset.", "outcome": "recovered", "recovered_amount_inr": 199.0}, {"case_id": "CASE0090", "customer_id": "CUST1090", "amount_inr": 4999.0, "failure_reason": "mandate_expired", "root_cause_category": "expired_or_invalid_instrument", "llm_recommended_action": "send_reminder_update_method", "final_action": "send_reminder_update_method", "stopping_rule_triggered": false, "stopping_rule_reason": "", "diagnosis_reasoning": "UPI mandate expired; needs re-authorization.", "outcome": "attempt_failed", "recovered_amount_inr": 0.0}];
+const SUMMARY = {"total_cases": 90, "total_at_risk_inr": 231710.0, "total_recovered_inr": 79267.0, "overall_recovery_rate_pct": 34.2, "outcome_breakdown": {"attempt_failed": 34, "recovered": 33, "no_action_taken": 23}, "recovery_by_failure_reason": {"account_closed": {"count": 6, "at_risk_inr": 16694.0, "recovered_inr": 0.0, "recovery_rate_pct": 0.0}, "bank_server_error": {"count": 8, "at_risk_inr": 22692.0, "recovered_inr": 12693.0, "recovery_rate_pct": 55.9}, "card_reported_stolen": {"count": 17, "at_risk_inr": 34483.0, "recovered_inr": 0.0, "recovery_rate_pct": 0.0}, "daily_limit_exceeded": {"count": 6, "at_risk_inr": 24994.0, "recovered_inr": 14995.0, "recovery_rate_pct": 60.0}, "expired_card": {"count": 10, "at_risk_inr": 30490.0, "recovered_inr": 3596.0, "recovery_rate_pct": 11.8}, "insufficient_funds": {"count": 11, "at_risk_inr": 9889.0, "recovered_inr": 3096.0, "recovery_rate_pct": 31.3}, "issuer_declined_generic": {"count": 8, "at_risk_inr": 19392.0, "recovered_inr": 4999.0, "recovery_rate_pct": 25.8}, "mandate_expired": {"count": 8, "at_risk_inr": 25492.0, "recovered_inr": 14998.0, "recovery_rate_pct": 58.8}, "network_timeout": {"count": 6, "at_risk_inr": 7994.0, "recovered_inr": 7795.0, "recovery_rate_pct": 97.5}, "wrong_otp": {"count": 10, "at_risk_inr": 39590.0, "recovered_inr": 17095.0, "recovery_rate_pct": 43.2}}, "stopping_rule_overrides": 11};
+const BASELINE = {
+  "total_cases": 90,
+  "total_at_risk_inr": 231710.0,
+  "naive_baseline": {
+    "description": "Retry every failed payment immediately, no diagnosis or routing",
+    "attempts_made": 90,
+    "unsafe_attempts": 23,
+    "recovered_inr": 66892.85,
+    "recovery_rate_pct": 28.9
+  },
+  "agent_approach": {
+    "description": "Diagnose root cause, route to the right action, apply stopping rules",
+    "attempts_made": 67,
+    "unsafe_attempts": 0,
+    "recovered_inr": 78978.95,
+    "recovery_rate_pct": 34.1
+  },
+  "delta": {
+    "extra_recovered_inr": 12086.1,
+    "fewer_attempts": 23,
+    "unsafe_attempts_avoided": 23
+  }
+};
+
+function fmtINR(n){ return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+// --- Animated counters ---
+function animateValue(el, endValue, opts = {}) {
+  const { prefix = '', suffix = '', decimals = 0, duration = 900 } = opts;
+  const start = performance.now();
+  function frame(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    const current = endValue * eased;
+    el.textContent = prefix + current.toLocaleString('en-IN', {
+      minimumFractionDigits: decimals, maximumFractionDigits: decimals
+    }) + suffix;
+    if (progress < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+animateValue(document.getElementById('statRate'), SUMMARY.overall_recovery_rate_pct, { suffix: '%', decimals: 1 });
+document.getElementById('statRateSub').textContent = fmtINR(SUMMARY.total_recovered_inr) + ' of ' + fmtINR(SUMMARY.total_at_risk_inr);
+animateValue(document.getElementById('statRisk'), SUMMARY.total_at_risk_inr, { prefix: '₹' });
+document.getElementById('statRiskSub').textContent = SUMMARY.total_cases + ' total cases';
+animateValue(document.getElementById('statRecovered'), SUMMARY.total_recovered_inr, { prefix: '₹' });
+document.getElementById('statRecoveredSub').textContent = (SUMMARY.outcome_breakdown.recovered || 0) + ' cases recovered';
+document.getElementById('calloutTitle').textContent = SUMMARY.stopping_rule_overrides + ' stopping-rule overrides';
+
+// --- Baseline comparison ---
+const compareGrid = document.getElementById('compareGrid');
+compareGrid.innerHTML = `
+  <div class="compare-col">
+    <div class="compare-label">Naive Baseline</div>
+    <div class="compare-desc">${BASELINE.naive_baseline.description}</div>
+    <div class="compare-value orange">${fmtINR(BASELINE.naive_baseline.recovered_inr)}</div>
+    <div class="compare-meta">
+      <b>${BASELINE.naive_baseline.recovery_rate_pct}%</b> expected recovery rate<br>
+      <b>${BASELINE.naive_baseline.attempts_made}</b> attempts made (no filtering)<br>
+      <b style="color:var(--danger)">${BASELINE.naive_baseline.unsafe_attempts}</b> unsafe retries on stolen/closed accounts
+    </div>
+  </div>
+  <div class="compare-col agent">
+    <div class="compare-label" style="color:var(--accent)">Agent Approach</div>
+    <div class="compare-desc">${BASELINE.agent_approach.description}</div>
+    <div class="compare-value green">${fmtINR(BASELINE.agent_approach.recovered_inr)}</div>
+    <div class="compare-meta">
+      <b>${BASELINE.agent_approach.recovery_rate_pct}%</b> expected recovery rate<br>
+      <b>${BASELINE.agent_approach.attempts_made}</b> attempts made (targeted only)<br>
+      <b style="color:var(--accent)">0</b> unsafe retries
+    </div>
+  </div>
+`;
+document.getElementById('deltaStrip').innerHTML =
+  `<span>+${fmtINR(BASELINE.delta.extra_recovered_inr)} more recovered</span> · <span>${BASELINE.delta.fewer_attempts} fewer attempts</span> · <span>${BASELINE.delta.unsafe_attempts_avoided} unsafe attempts avoided</span> — all figures are expected values (amount × probability), not a single random draw.`;
+
+// --- Case walkthrough ---
+const showcase = AUDIT.find(r => r.case_id === 'CASE0004');
+if (showcase) {
+  document.getElementById('caseWalkthrough').innerHTML = `
+    <div class="case-step">
+      <div class="step-num">1</div>
+      <div class="step-body"><b>Failure detected</b><span>${showcase.failure_reason.replaceAll('_',' ')} — ${fmtINR(showcase.amount_inr)} payment failed for ${showcase.customer_id}</span></div>
+    </div>
+    <div class="case-step">
+      <div class="step-num">2</div>
+      <div class="step-body"><b>LLM diagnosis</b><span>"${showcase.diagnosis_reasoning}" → recommended: <b style="color:var(--text)">${showcase.llm_recommended_action.replaceAll('_',' ')}</b></span></div>
+    </div>
+    <div class="case-step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <b>Stopping rule check</b>
+        <span>${showcase.stopping_rule_reason || 'No override needed.'}</span>
+        ${showcase.stopping_rule_triggered === 'True' ? '<div class="case-flag">⚠ Rule override applied</div>' : ''}
+      </div>
+    </div>
+    <div class="case-step">
+      <div class="step-num">4</div>
+      <div class="step-body"><b>Final action executed</b><span>${showcase.final_action.replaceAll('_',' ')}</span></div>
+    </div>
+    <div class="case-step">
+      <div class="step-num">5</div>
+      <div class="step-body"><b>Outcome</b><span style="color:var(--accent)">✓ ${fmtINR(showcase.recovered_amount_inr)} recovered</span></div>
+    </div>
+  `;
+}
+
+const reasonPanel = document.getElementById('reasonPanel');
+const reasons = Object.entries(SUMMARY.recovery_by_failure_reason).sort((a,b)=>b[1].recovered_inr - a[1].recovered_inr);
+reasons.forEach(([name, r]) => {
+  const row = document.createElement('div');
+  row.className = 'reason-row';
+  row.innerHTML = `
+    <div class="reason-name">${name.replaceAll('_',' ')}</div>
+    <div class="reason-track"><div class="reason-fill" style="width:${r.recovery_rate_pct}%"></div></div>
+    <div class="reason-amt">${fmtINR(r.recovered_inr)} <span class="of">/ ${fmtINR(r.at_risk_inr)}</span></div>
+  `;
+  reasonPanel.appendChild(row);
+});
+
+const outcomes = ['all','recovered','attempt_failed','no_action_taken','pending_human_review'];
+const labels = {all:'All', recovered:'Recovered', attempt_failed:'Failed', no_action_taken:'No Action', pending_human_review:'Pending'};
+let currentFilter = 'all';
+const filtersEl = document.getElementById('filters');
+outcomes.forEach(o => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn' + (o==='all' ? ' active' : '');
+  btn.textContent = labels[o];
+  btn.onclick = () => {
+    currentFilter = o;
+    [...filtersEl.children].forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  };
+  filtersEl.appendChild(btn);
+});
+
+function renderTable(){
+  const body = document.getElementById('auditBody');
+  body.innerHTML = '';
+  const rows = currentFilter === 'all' ? AUDIT : AUDIT.filter(r => r.outcome === currentFilter);
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="mono">${r.case_id}</td>
+      <td>${r.failure_reason.replaceAll('_',' ')}</td>
+      <td class="mono">${fmtINR(r.amount_inr)}</td>
+      <td><span class="badge ${r.outcome}">${r.outcome.replaceAll('_',' ').toUpperCase()}</span></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+renderTable();
+
+function exportCSV(){
+  const rows = currentFilter === 'all' ? AUDIT : AUDIT.filter(r => r.outcome === currentFilter);
+  const header = Object.keys(rows[0]).join(',');
+  const lines = rows.map(r => Object.values(r).map(v => `"${v}"`).join(','));
+  const csv = [header, ...lines].join('\\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'audit_trail_export.csv';
+  a.click();
+}
+</script>
+
+</body>
+</html>
