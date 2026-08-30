@@ -1,0 +1,91 @@
+case_id,customer_id,plan_name,amount_inr,payment_method,failure_reason,decline_type,failure_date,prior_retry_count,days_since_signup,_true_recover_prob
+CASE0001,CUST1001,Pro Monthly,199,Debit Card,expired_card,hard_decline,2026-07-15,0,382,0.15
+CASE0002,CUST1002,Team Monthly,299,Wallet,expired_card,hard_decline,2026-07-03,0,52,0.15
+CASE0003,CUST1003,Premium Monthly,999,Wallet,card_reported_stolen,hard_decline,2026-07-02,2,106,0.0
+CASE0004,CUST1004,Team Monthly,4999,Credit Card,network_timeout,soft_decline,2026-08-07,1,8,0.7
+CASE0005,CUST1005,Pro Annual,4999,Debit Card,bank_server_error,soft_decline,2026-07-10,0,395,0.6
+CASE0006,CUST1006,Team Monthly,299,UPI,wrong_otp,soft_decline,2026-07-07,1,181,0.4
+CASE0007,CUST1007,Team Monthly,1499,UPI,daily_limit_exceeded,soft_decline,2026-08-04,0,198,0.5
+CASE0008,CUST1008,Pro Annual,1499,Wallet,expired_card,hard_decline,2026-08-06,0,365,0.15
+CASE0009,CUST1009,Pro Annual,199,Credit Card,expired_card,hard_decline,2026-07-06,0,56,0.15
+CASE0010,CUST1010,Pro Annual,1499,Netbanking,account_closed,hard_decline,2026-07-11,1,186,0.0
+CASE0011,CUST1011,Premium Monthly,1499,UPI,card_reported_stolen,hard_decline,2026-08-10,0,278,0.0
+CASE0012,CUST1012,Team Monthly,499,Netbanking,card_reported_stolen,hard_decline,2026-07-18,2,357,0.0
+CASE0013,CUST1013,Basic Monthly,999,Debit Card,network_timeout,soft_decline,2026-07-15,0,166,0.7
+CASE0014,CUST1014,Pro Monthly,1499,UPI,account_closed,hard_decline,2026-08-06,2,166,0.0
+CASE0015,CUST1015,Team Monthly,9999,Netbanking,card_reported_stolen,hard_decline,2026-07-10,1,76,0.0
+CASE0016,CUST1016,Team Monthly,1499,Wallet,card_reported_stolen,hard_decline,2026-08-07,1,190,0.0
+CASE0017,CUST1017,Team Monthly,499,Wallet,card_reported_stolen,hard_decline,2026-07-06,0,61,0.0
+CASE0018,CUST1018,Premium Monthly,499,Netbanking,bank_server_error,soft_decline,2026-07-05,1,200,0.6
+CASE0019,CUST1019,Pro Annual,9999,Wallet,daily_limit_exceeded,soft_decline,2026-08-05,0,353,0.5
+CASE0020,CUST1020,Basic Monthly,1499,Debit Card,expired_card,hard_decline,2026-07-19,1,85,0.15
+CASE0021,CUST1021,Premium Monthly,199,Debit Card,issuer_declined_generic,soft_decline,2026-08-18,0,264,0.35
+CASE0022,CUST1022,Premium Monthly,1499,Wallet,expired_card,hard_decline,2026-07-13,0,196,0.15
+CASE0023,CUST1023,Pro Annual,199,Wallet,bank_server_error,soft_decline,2026-08-01,0,62,0.6
+CASE0024,CUST1024,Basic Monthly,1499,Credit Card,wrong_otp,soft_decline,2026-07-16,2,45,0.4
+CASE0025,CUST1025,Premium Monthly,9999,UPI,expired_card,hard_decline,2026-08-19,0,70,0.15
+CASE0026,CUST1026,Premium Monthly,499,Debit Card,issuer_declined_generic,soft_decline,2026-08-25,2,221,0.35
+CASE0027,CUST1027,Team Monthly,999,Debit Card,card_reported_stolen,hard_decline,2026-08-12,2,196,0.0
+CASE0028,CUST1028,Pro Monthly,9999,UPI,issuer_declined_generic,soft_decline,2026-07-15,0,178,0.35
+CASE0029,CUST1029,Pro Monthly,999,Wallet,insufficient_funds,soft_decline,2026-07-01,0,367,0.55
+CASE0030,CUST1030,Basic Monthly,999,UPI,insufficient_funds,soft_decline,2026-08-25,1,41,0.55
+CASE0031,CUST1031,Team Monthly,999,Debit Card,network_timeout,soft_decline,2026-07-14,2,72,0.7
+CASE0032,CUST1032,Team Monthly,9999,Credit Card,daily_limit_exceeded,soft_decline,2026-08-21,1,102,0.5
+CASE0033,CUST1033,Pro Annual,299,Netbanking,expired_card,hard_decline,2026-07-28,1,244,0.15
+CASE0034,CUST1034,Team Monthly,299,UPI,insufficient_funds,soft_decline,2026-08-16,1,60,0.55
+CASE0035,CUST1035,Premium Monthly,999,Credit Card,card_reported_stolen,hard_decline,2026-07-29,0,221,0.0
+CASE0036,CUST1036,Pro Monthly,1499,Netbanking,bank_server_error,soft_decline,2026-08-25,0,231,0.6
+CASE0037,CUST1037,Premium Monthly,299,UPI,network_timeout,soft_decline,2026-08-23,0,52,0.7
+CASE0038,CUST1038,Team Monthly,499,Netbanking,card_reported_stolen,hard_decline,2026-07-31,0,210,0.0
+CASE0039,CUST1039,Basic Monthly,499,Netbanking,insufficient_funds,soft_decline,2026-07-25,1,237,0.55
+CASE0040,CUST1040,Team Monthly,4999,Wallet,mandate_expired,hard_decline,2026-07-10,0,156,0.1
+CASE0041,CUST1041,Premium Monthly,199,Wallet,card_reported_stolen,hard_decline,2026-07-04,2,165,0.0
+CASE0042,CUST1042,Team Monthly,199,Wallet,insufficient_funds,soft_decline,2026-08-02,2,85,0.55
+CASE0043,CUST1043,Basic Monthly,299,Credit Card,insufficient_funds,soft_decline,2026-08-08,0,350,0.55
+CASE0044,CUST1044,Premium Monthly,4999,UPI,card_reported_stolen,hard_decline,2026-07-16,2,309,0.0
+CASE0045,CUST1045,Premium Monthly,299,Netbanking,insufficient_funds,soft_decline,2026-08-06,2,166,0.55
+CASE0046,CUST1046,Pro Monthly,999,Debit Card,mandate_expired,hard_decline,2026-07-17,1,72,0.1
+CASE0047,CUST1047,Basic Monthly,9999,Debit Card,mandate_expired,hard_decline,2026-07-01,1,323,0.1
+CASE0048,CUST1048,Premium Monthly,299,UPI,daily_limit_exceeded,soft_decline,2026-07-14,2,140,0.5
+CASE0049,CUST1049,Pro Monthly,2999,UPI,bank_server_error,soft_decline,2026-07-24,1,85,0.6
+CASE0050,CUST1050,Premium Monthly,1499,Wallet,issuer_declined_generic,soft_decline,2026-07-01,2,288,0.35
+CASE0051,CUST1051,Pro Annual,299,Credit Card,mandate_expired,hard_decline,2026-07-08,0,385,0.1
+CASE0052,CUST1052,Pro Annual,499,Debit Card,network_timeout,soft_decline,2026-08-08,0,372,0.7
+CASE0053,CUST1053,Premium Monthly,999,Debit Card,wrong_otp,soft_decline,2026-08-01,1,31,0.4
+CASE0054,CUST1054,Basic Monthly,4999,Debit Card,expired_card,hard_decline,2026-07-01,1,399,0.15
+CASE0055,CUST1055,Team Monthly,1499,Credit Card,bank_server_error,soft_decline,2026-08-05,2,223,0.6
+CASE0056,CUST1056,Basic Monthly,199,UPI,network_timeout,soft_decline,2026-08-14,0,284,0.7
+CASE0057,CUST1057,Premium Monthly,2999,Wallet,insufficient_funds,soft_decline,2026-07-10,1,70,0.55
+CASE0058,CUST1058,Basic Monthly,1499,Debit Card,insufficient_funds,soft_decline,2026-07-23,0,354,0.55
+CASE0059,CUST1059,Premium Monthly,299,Debit Card,card_reported_stolen,hard_decline,2026-08-25,1,322,0.0
+CASE0060,CUST1060,Pro Monthly,999,Credit Card,bank_server_error,soft_decline,2026-07-27,0,96,0.6
+CASE0061,CUST1061,Pro Annual,4999,Credit Card,wrong_otp,soft_decline,2026-07-11,2,60,0.4
+CASE0062,CUST1062,Pro Monthly,199,Netbanking,account_closed,hard_decline,2026-07-13,1,184,0.0
+CASE0063,CUST1063,Basic Monthly,999,Credit Card,mandate_expired,hard_decline,2026-08-12,0,209,0.1
+CASE0064,CUST1064,Pro Annual,1499,UPI,wrong_otp,soft_decline,2026-07-23,2,265,0.4
+CASE0065,CUST1065,Basic Monthly,2999,UPI,account_closed,hard_decline,2026-07-17,0,302,0.0
+CASE0066,CUST1066,Premium Monthly,199,UPI,mandate_expired,hard_decline,2026-07-28,1,378,0.1
+CASE0067,CUST1067,Premium Monthly,4999,Wallet,wrong_otp,soft_decline,2026-07-08,1,300,0.4
+CASE0068,CUST1068,Team Monthly,1499,UPI,card_reported_stolen,hard_decline,2026-07-01,2,280,0.0
+CASE0069,CUST1069,Basic Monthly,2999,Netbanking,card_reported_stolen,hard_decline,2026-08-12,1,324,0.0
+CASE0070,CUST1070,Premium Monthly,299,Debit Card,wrong_otp,soft_decline,2026-07-20,2,214,0.4
+CASE0071,CUST1071,Premium Monthly,4999,Debit Card,wrong_otp,soft_decline,2026-07-09,0,220,0.4
+CASE0072,CUST1072,Premium Monthly,499,Wallet,account_closed,hard_decline,2026-07-20,1,285,0.0
+CASE0073,CUST1073,Pro Monthly,1499,Debit Card,insufficient_funds,soft_decline,2026-07-28,2,315,0.55
+CASE0074,CUST1074,Team Monthly,9999,Netbanking,wrong_otp,soft_decline,2026-08-13,0,266,0.4
+CASE0075,CUST1075,Pro Annual,499,UPI,issuer_declined_generic,soft_decline,2026-08-02,2,329,0.35
+CASE0076,CUST1076,Pro Monthly,2999,UPI,daily_limit_exceeded,soft_decline,2026-08-13,1,120,0.5
+CASE0077,CUST1077,Basic Monthly,499,UPI,card_reported_stolen,hard_decline,2026-07-16,1,317,0.0
+CASE0078,CUST1078,Premium Monthly,9999,Netbanking,expired_card,hard_decline,2026-07-13,2,361,0.15
+CASE0079,CUST1079,Pro Monthly,9999,Netbanking,account_closed,hard_decline,2026-07-10,2,357,0.0
+CASE0080,CUST1080,Pro Monthly,299,Netbanking,insufficient_funds,soft_decline,2026-07-12,2,270,0.55
+CASE0081,CUST1081,Pro Monthly,199,Wallet,issuer_declined_generic,soft_decline,2026-08-24,0,238,0.35
+CASE0082,CUST1082,Premium Monthly,9999,Wallet,bank_server_error,soft_decline,2026-08-08,1,391,0.6
+CASE0083,CUST1083,Team Monthly,4999,Wallet,issuer_declined_generic,soft_decline,2026-07-11,2,248,0.35
+CASE0084,CUST1084,Pro Annual,1499,Credit Card,issuer_declined_generic,soft_decline,2026-08-19,2,253,0.35
+CASE0085,CUST1085,Basic Monthly,1499,Netbanking,card_reported_stolen,hard_decline,2026-08-15,1,125,0.0
+CASE0086,CUST1086,Premium Monthly,2999,Debit Card,mandate_expired,hard_decline,2026-07-06,0,82,0.1
+CASE0087,CUST1087,Pro Monthly,4999,Credit Card,card_reported_stolen,hard_decline,2026-07-05,1,213,0.0
+CASE0088,CUST1088,Basic Monthly,9999,Netbanking,wrong_otp,soft_decline,2026-07-14,1,204,0.4
+CASE0089,CUST1089,Team Monthly,199,Wallet,daily_limit_exceeded,soft_decline,2026-07-31,0,185,0.5
+CASE0090,CUST1090,Premium Monthly,4999,Netbanking,mandate_expired,hard_decline,2026-08-17,2,284,0.1

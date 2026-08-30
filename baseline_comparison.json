@@ -1,0 +1,23 @@
+{
+  "total_cases": 90,
+  "total_at_risk_inr": 231710.0,
+  "naive_baseline": {
+    "description": "Retry every failed payment immediately, no diagnosis or routing",
+    "attempts_made": 90,
+    "unsafe_attempts": 23,
+    "recovered_inr": 66892.85,
+    "recovery_rate_pct": 28.9
+  },
+  "agent_approach": {
+    "description": "Diagnose root cause, route to the right action, apply stopping rules",
+    "attempts_made": 67,
+    "unsafe_attempts": 0,
+    "recovered_inr": 78978.95,
+    "recovery_rate_pct": 34.1
+  },
+  "delta": {
+    "extra_recovered_inr": 12086.1,
+    "fewer_attempts": 23,
+    "unsafe_attempts_avoided": 23
+  }
+}

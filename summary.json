@@ -1,0 +1,74 @@
+{
+  "total_cases": 90,
+  "total_at_risk_inr": 231710.0,
+  "total_recovered_inr": 79267.0,
+  "overall_recovery_rate_pct": 34.2,
+  "outcome_breakdown": {
+    "attempt_failed": 34,
+    "recovered": 33,
+    "no_action_taken": 23
+  },
+  "recovery_by_failure_reason": {
+    "account_closed": {
+      "count": 6,
+      "at_risk_inr": 16694.0,
+      "recovered_inr": 0.0,
+      "recovery_rate_pct": 0.0
+    },
+    "bank_server_error": {
+      "count": 8,
+      "at_risk_inr": 22692.0,
+      "recovered_inr": 12693.0,
+      "recovery_rate_pct": 55.9
+    },
+    "card_reported_stolen": {
+      "count": 17,
+      "at_risk_inr": 34483.0,
+      "recovered_inr": 0.0,
+      "recovery_rate_pct": 0.0
+    },
+    "daily_limit_exceeded": {
+      "count": 6,
+      "at_risk_inr": 24994.0,
+      "recovered_inr": 14995.0,
+      "recovery_rate_pct": 60.0
+    },
+    "expired_card": {
+      "count": 10,
+      "at_risk_inr": 30490.0,
+      "recovered_inr": 3596.0,
+      "recovery_rate_pct": 11.8
+    },
+    "insufficient_funds": {
+      "count": 11,
+      "at_risk_inr": 9889.0,
+      "recovered_inr": 3096.0,
+      "recovery_rate_pct": 31.3
+    },
+    "issuer_declined_generic": {
+      "count": 8,
+      "at_risk_inr": 19392.0,
+      "recovered_inr": 4999.0,
+      "recovery_rate_pct": 25.8
+    },
+    "mandate_expired": {
+      "count": 8,
+      "at_risk_inr": 25492.0,
+      "recovered_inr": 14998.0,
+      "recovery_rate_pct": 58.8
+    },
+    "network_timeout": {
+      "count": 6,
+      "at_risk_inr": 7994.0,
+      "recovered_inr": 7795.0,
+      "recovery_rate_pct": 97.5
+    },
+    "wrong_otp": {
+      "count": 10,
+      "at_risk_inr": 39590.0,
+      "recovered_inr": 17095.0,
+      "recovery_rate_pct": 43.2
+    }
+  },
+  "stopping_rule_overrides": 11
+}

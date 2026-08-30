@@ -1,0 +1,91 @@
+case_id,customer_id,amount_inr,failure_reason,root_cause_category,llm_recommended_action,final_action,stopping_rule_triggered,stopping_rule_reason,diagnosis_reasoning,outcome,recovered_amount_inr
+CASE0001,CUST1001,199.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,attempt_failed,0.0
+CASE0002,CUST1002,299.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,recovered,299.0
+CASE0003,CUST1003,999.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0004,CUST1004,4999.0,network_timeout,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Transient network error; safe to retry immediately.,recovered,4999.0
+CASE0005,CUST1005,4999.0,bank_server_error,temporary_bank_issue,retry_now,retry_now,False,,Bank-side server error; safe to retry immediately.,recovered,4999.0
+CASE0006,CUST1006,299.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",recovered,299.0
+CASE0007,CUST1007,1499.0,daily_limit_exceeded,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Daily transaction limit hit; retry after reset.,recovered,1499.0
+CASE0008,CUST1008,1499.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,recovered,1499.0
+CASE0009,CUST1009,199.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,attempt_failed,0.0
+CASE0010,CUST1010,1499.0,account_closed,unrecoverable,stop_no_action,stop_no_action,False,,Account closed; nothing to recover.,no_action_taken,0.0
+CASE0011,CUST1011,1499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0012,CUST1012,499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0013,CUST1013,999.0,network_timeout,temporary_bank_issue,retry_now,retry_now,False,,Transient network error; safe to retry immediately.,recovered,999.0
+CASE0014,CUST1014,1499.0,account_closed,unrecoverable,stop_no_action,stop_no_action,False,,Account closed; nothing to recover.,no_action_taken,0.0
+CASE0015,CUST1015,9999.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0016,CUST1016,1499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0017,CUST1017,499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0018,CUST1018,499.0,bank_server_error,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Bank-side server error; safe to retry immediately.,recovered,499.0
+CASE0019,CUST1019,9999.0,daily_limit_exceeded,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Daily transaction limit hit; retry after reset.,recovered,9999.0
+CASE0020,CUST1020,1499.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,recovered,1499.0
+CASE0021,CUST1021,199.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_now,False,,Generic issuer decline; often resolves on retry.,attempt_failed,0.0
+CASE0022,CUST1022,1499.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,attempt_failed,0.0
+CASE0023,CUST1023,199.0,bank_server_error,temporary_bank_issue,retry_now,retry_now,False,,Bank-side server error; safe to retry immediately.,recovered,199.0
+CASE0024,CUST1024,1499.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",recovered,1499.0
+CASE0025,CUST1025,9999.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,attempt_failed,0.0
+CASE0026,CUST1026,499.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Generic issuer decline; often resolves on retry.,attempt_failed,0.0
+CASE0027,CUST1027,999.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0028,CUST1028,9999.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_now,False,,Generic issuer decline; often resolves on retry.,attempt_failed,0.0
+CASE0029,CUST1029,999.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,recovered,999.0
+CASE0030,CUST1030,999.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,attempt_failed,0.0
+CASE0031,CUST1031,999.0,network_timeout,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Transient network error; safe to retry immediately.,recovered,999.0
+CASE0032,CUST1032,9999.0,daily_limit_exceeded,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Daily transaction limit hit; retry after reset.,attempt_failed,0.0
+CASE0033,CUST1033,299.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,recovered,299.0
+CASE0034,CUST1034,299.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,recovered,299.0
+CASE0035,CUST1035,999.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0036,CUST1036,1499.0,bank_server_error,temporary_bank_issue,retry_now,retry_now,False,,Bank-side server error; safe to retry immediately.,recovered,1499.0
+CASE0037,CUST1037,299.0,network_timeout,temporary_bank_issue,retry_now,retry_now,False,,Transient network error; safe to retry immediately.,recovered,299.0
+CASE0038,CUST1038,499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0039,CUST1039,499.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,attempt_failed,0.0
+CASE0040,CUST1040,4999.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,recovered,4999.0
+CASE0041,CUST1041,199.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0042,CUST1042,199.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,attempt_failed,0.0
+CASE0043,CUST1043,299.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,attempt_failed,0.0
+CASE0044,CUST1044,4999.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0045,CUST1045,299.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,recovered,299.0
+CASE0046,CUST1046,999.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,attempt_failed,0.0
+CASE0047,CUST1047,9999.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,recovered,9999.0
+CASE0048,CUST1048,299.0,daily_limit_exceeded,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Daily transaction limit hit; retry after reset.,recovered,299.0
+CASE0049,CUST1049,2999.0,bank_server_error,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Bank-side server error; safe to retry immediately.,recovered,2999.0
+CASE0050,CUST1050,1499.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Generic issuer decline; often resolves on retry.,attempt_failed,0.0
+CASE0051,CUST1051,299.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,attempt_failed,0.0
+CASE0052,CUST1052,499.0,network_timeout,temporary_bank_issue,retry_now,retry_now,False,,Transient network error; safe to retry immediately.,recovered,499.0
+CASE0053,CUST1053,999.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",attempt_failed,0.0
+CASE0054,CUST1054,4999.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,attempt_failed,0.0
+CASE0055,CUST1055,1499.0,bank_server_error,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Bank-side server error; safe to retry immediately.,recovered,1499.0
+CASE0056,CUST1056,199.0,network_timeout,temporary_bank_issue,retry_now,retry_now,False,,Transient network error; safe to retry immediately.,attempt_failed,0.0
+CASE0057,CUST1057,2999.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,attempt_failed,0.0
+CASE0058,CUST1058,1499.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,recovered,1499.0
+CASE0059,CUST1059,299.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0060,CUST1060,999.0,bank_server_error,temporary_bank_issue,retry_now,retry_now,False,,Bank-side server error; safe to retry immediately.,recovered,999.0
+CASE0061,CUST1061,4999.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",recovered,4999.0
+CASE0062,CUST1062,199.0,account_closed,unrecoverable,stop_no_action,stop_no_action,False,,Account closed; nothing to recover.,no_action_taken,0.0
+CASE0063,CUST1063,999.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,attempt_failed,0.0
+CASE0064,CUST1064,1499.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",attempt_failed,0.0
+CASE0065,CUST1065,2999.0,account_closed,unrecoverable,stop_no_action,stop_no_action,False,,Account closed; nothing to recover.,no_action_taken,0.0
+CASE0066,CUST1066,199.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,attempt_failed,0.0
+CASE0067,CUST1067,4999.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",attempt_failed,0.0
+CASE0068,CUST1068,1499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0069,CUST1069,2999.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0070,CUST1070,299.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",recovered,299.0
+CASE0071,CUST1071,4999.0,wrong_otp,user_action_needed,retry_now,retry_now,False,,"OTP entry issue; retry once, then prompt customer.",attempt_failed,0.0
+CASE0072,CUST1072,499.0,account_closed,unrecoverable,stop_no_action,stop_no_action,False,,Account closed; nothing to recover.,no_action_taken,0.0
+CASE0073,CUST1073,1499.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,attempt_failed,0.0
+CASE0074,CUST1074,9999.0,wrong_otp,user_action_needed,retry_now,retry_now,False,,"OTP entry issue; retry once, then prompt customer.",recovered,9999.0
+CASE0075,CUST1075,499.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Generic issuer decline; often resolves on retry.,attempt_failed,0.0
+CASE0076,CUST1076,2999.0,daily_limit_exceeded,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Daily transaction limit hit; retry after reset.,recovered,2999.0
+CASE0077,CUST1077,499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0078,CUST1078,9999.0,expired_card,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,Card has expired; customer needs to update payment method.,attempt_failed,0.0
+CASE0079,CUST1079,9999.0,account_closed,unrecoverable,stop_no_action,stop_no_action,False,,Account closed; nothing to recover.,no_action_taken,0.0
+CASE0080,CUST1080,299.0,insufficient_funds,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Likely temporary cash-flow issue; wait before retrying.,attempt_failed,0.0
+CASE0081,CUST1081,199.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_now,False,,Generic issuer decline; often resolves on retry.,attempt_failed,0.0
+CASE0082,CUST1082,9999.0,bank_server_error,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Bank-side server error; safe to retry immediately.,attempt_failed,0.0
+CASE0083,CUST1083,4999.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Generic issuer decline; often resolves on retry.,recovered,4999.0
+CASE0084,CUST1084,1499.0,issuer_declined_generic,temporary_bank_issue,retry_now,retry_in_3_days,True,"override: consecutive immediate retries blocked, spacing out attempt",Generic issuer decline; often resolves on retry.,attempt_failed,0.0
+CASE0085,CUST1085,1499.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0086,CUST1086,2999.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,attempt_failed,0.0
+CASE0087,CUST1087,4999.0,card_reported_stolen,unrecoverable,stop_no_action,stop_no_action,False,,Card reported stolen; no legitimate retry path.,no_action_taken,0.0
+CASE0088,CUST1088,9999.0,wrong_otp,user_action_needed,send_reminder_update_method,send_reminder_update_method,False,,"OTP entry issue; retry once, then prompt customer.",attempt_failed,0.0
+CASE0089,CUST1089,199.0,daily_limit_exceeded,user_action_needed,retry_in_3_days,retry_in_3_days,False,,Daily transaction limit hit; retry after reset.,recovered,199.0
+CASE0090,CUST1090,4999.0,mandate_expired,expired_or_invalid_instrument,send_reminder_update_method,send_reminder_update_method,False,,UPI mandate expired; needs re-authorization.,attempt_failed,0.0
